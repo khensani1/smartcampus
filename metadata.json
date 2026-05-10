@@ -1,0 +1,13 @@
+{
+  "name": "CSAS - Campus Smart Assistance System",
+  "description": "A unified digital platform for students offering AI-driven course recommendations, smart campus navigation, departmental access, and administrative analytics.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "AI-powered academic guidance",
+    "Smart campus navigation with route optimization",
+    "Interactive reporting and analytics dashboard",
+    "Centralized departmental directory"
+  ]
+}
