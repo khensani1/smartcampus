@@ -62,10 +62,10 @@ export function Recommendations() {
           <div className="w-12 h-12 bg-royal text-white rounded-2xl flex items-center justify-center mb-6">
             <GraduationCap size={24} />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight mb-2 text-royal">AI Academic Coach</h1>
+          <h1 className="text-4xl font-bold tracking-tight mb-2 text-royal">TUT AI Academic Coach</h1>
           <p className="text-royal/50 leading-relaxed max-w-md">
             Enter your academic profile below and let our AI analyze your eligibility for 
-            thousands of university programmes.
+            TUT programmes at the Soshanguve South Campus.
           </p>
         </header>
 

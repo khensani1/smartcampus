@@ -42,11 +42,61 @@ export const aiService = {
       model: "gemini-3-flash-preview",
       contents: query,
       config: {
-        systemInstruction: `You are the CSAS (Campus Smart Assistance System) virtual assistant for a South African University. 
-        You help students with course info, building navigation, and departmental contacts. 
+        systemInstruction: `You are the CSAS (Campus Smart Assistance System) virtual assistant specifically for Tshwane University of Technology (TUT) Soshanguve South Campus. 
+        You help students with course info (especially ICT and Humanities), building navigation (e.g., Building 10, Building L, Building 21), and departmental contacts at TUT. 
+        Refer to the campus as "Sosh South" or "Soshanguve South Campus".
         Be professional, helpful, and concise. ${context ? `Context: ${context}` : ''}`
       }
     });
     return response.text;
+  },
+
+  async getCampusInsights() {
+    const prompt = "Generate 3 short, creative 'Campus Insights' for TUT Soshanguve South students. These should sound like bulleted news items or tips about campus life, admin deadlines, or academic advice. Keep them concise and relevant to Sosh South.";
+    
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              title: { type: Type.STRING },
+              content: { type: Type.STRING },
+              type: { type: Type.STRING, enum: ["News", "Tip", "Deadline"] }
+            },
+            required: ["title", "content", "type"]
+          }
+        }
+      }
+    });
+    return JSON.parse(response.text);
+  },
+
+  async getSmartNavigation(query: string) {
+    const prompt = `Translate this student's navigation request into a specific building or location at TUT Soshanguve South: "${query}".
+    Buildings available: Building 10 (ICT), Building L (Humanities), Building 21 (Admin/Library), Student Center, Cafeteria.
+    If multiple, pick the best one.`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            destination: { type: Type.STRING },
+            explanation: { type: Type.STRING },
+            confidence: { type: Type.NUMBER }
+          },
+          required: ["destination", "explanation"]
+        }
+      }
+    });
+    return JSON.parse(response.text);
   }
 };

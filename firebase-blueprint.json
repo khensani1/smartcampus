@@ -1,0 +1,39 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Student profile for TUT Soshanguve South campus",
+      "type": "object",
+      "properties": {
+        "studentNumber": { "type": "string", "description": "9-digit TUT student number" },
+        "idNumber": { "type": "string", "description": "National ID number" },
+        "fullName": { "type": "string", "description": "Full given name" },
+        "surname": { "type": "string", "description": "Student surname" },
+        "email": { "type": "string", "format": "email" }
+      },
+      "required": ["studentNumber", "idNumber", "fullName", "surname", "email"]
+    },
+    "CampusInsight": {
+      "title": "Campus Insight",
+      "description": "AI-generated news and tips for the pulse",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "type": { "type": "string", "enum": ["News", "Tip", "Deadline"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "type", "createdAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Individual student profiles"
+    },
+    "insights/{insightId}": {
+      "schema": "CampusInsight",
+      "description": "Global campus pulse updates"
+    }
+  }
+}

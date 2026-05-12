@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 import { DEPARTMENTS } from '../../constants';
+import { Search, Sparkles, Loader2, Navigation as NavigationIcon } from 'lucide-react';
+import { aiService } from '../../services/ai';
 
 const API_KEY =
   process.env.GOOGLE_MAPS_PLATFORM_KEY ||
@@ -10,7 +12,48 @@ const API_KEY =
 
 const hasValidKey = Boolean(API_KEY) && API_KEY !== 'YOUR_API_KEY' && API_KEY !== '';
 
-export function CampusMap() {
+interface CampusMapProps {
+  prefilledSearch?: string;
+}
+
+export function CampusMap({ prefilledSearch }: CampusMapProps) {
+  const [searchQuery, setSearchQuery] = useState(prefilledSearch || '');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResult, setSearchResult] = useState<{ destination: string; explanation: string } | null>(null);
+
+  React.useEffect(() => {
+    if (prefilledSearch) {
+      const runPrefilled = async () => {
+        setIsSearching(true);
+        try {
+          const result = await aiService.getSmartNavigation(prefilledSearch);
+          setSearchResult(result);
+        } catch (error) {
+          console.error("Prefilled search failed", error);
+        } finally {
+          setIsSearching(false);
+        }
+      };
+      runPrefilled();
+    }
+  }, [prefilledSearch]);
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+
+    setIsSearching(true);
+    setSearchResult(null);
+    try {
+      const result = await aiService.getSmartNavigation(searchQuery);
+      setSearchResult(result);
+    } catch (error) {
+      console.error("Search failed", error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
   if (!hasValidKey) {
     return (
       <div className="flex items-center justify-center h-full bg-white rounded-2xl border border-royal/10 p-12">
@@ -57,34 +100,78 @@ export function CampusMap() {
 
   return (
     <div className="h-full w-full rounded-2xl overflow-hidden shadow-sm border border-royal/10 relative group">
+      {/* Search Bar Overlay */}
+      <div className="absolute top-6 left-6 z-10 w-full max-w-sm">
+        <form onSubmit={handleSearch} className="flex gap-2">
+          <div className="flex-1 relative">
+            <input 
+              type="text" 
+              placeholder="e.g. 'Where is Building 10?'"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white/90 backdrop-blur-md border border-royal/10 rounded-xl px-4 py-3 pl-11 text-sm text-royal focus:outline-none focus:ring-2 focus:ring-royal/20 shadow-xl"
+            />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-royal/30" size={16} />
+          </div>
+          <button 
+            type="submit"
+            disabled={isSearching}
+            className="p-3 bg-royal text-white rounded-xl shadow-xl hover:bg-royal/90 transition-colors disabled:opacity-50"
+          >
+            {isSearching ? <Loader2 className="animate-spin" size={18} /> : <Sparkles size={18} />}
+          </button>
+        </form>
+
+        {searchResult && (
+          <div className="mt-3 p-4 bg-white/95 backdrop-blur-md border border-royal/10 rounded-xl shadow-2xl animate-in fade-in slide-in-from-top-2">
+            <div className="flex items-start gap-3">
+              <div className="shrink-0 w-8 h-8 rounded-lg bg-sunflower/20 text-royal flex items-center justify-center">
+                <NavigationIcon size={14} />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-xs font-bold text-royal">AI Destination identified</h4>
+                <p className="text-[10px] font-bold text-royal/40 uppercase tracking-widest">{searchResult.destination}</p>
+                <p className="text-[11px] text-royal/60 leading-relaxed italic">"{searchResult.explanation}"</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       <APIProvider apiKey={API_KEY} version="weekly">
         <Map
-          defaultCenter={{ lat: -26.1906, lng: 28.0264 }}
+          defaultCenter={{ lat: -25.5413, lng: 28.0863 }}
           defaultZoom={16}
-          mapId="CSAS_CAMPUS_MAP"
+          mapId="TUT_SOSH_SOUTH_MAP"
           internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
           className="w-full h-full"
           disableDefaultUI={false}
           gestureHandling="greedy"
         >
-          {DEPARTMENTS.map((dept) => (
-            <AdvancedMarker 
-              key={dept.id} 
-              position={dept.location}
-              title={dept.name}
-            >
-              <Pin 
-                background={dept.faculty === 'Science' ? '#4169E1' : '#FBBF24'} 
-                glyphColor="#fff" 
-                borderColor="#fff"
-              />
-            </AdvancedMarker>
-          ))}
+          {DEPARTMENTS.map((dept) => {
+            const isHighlighted = searchResult?.destination.toLowerCase().includes(dept.building.toLowerCase()) || 
+                              searchResult?.destination.toLowerCase().includes(dept.name.toLowerCase());
+            
+            return (
+              <AdvancedMarker 
+                key={dept.id} 
+                position={dept.location}
+                title={dept.name}
+              >
+                <Pin 
+                  background={isHighlighted ? '#BE123C' : (dept.faculty === 'ICT' ? '#4169E1' : '#FBBF24')} 
+                  glyphColor="#fff" 
+                  borderColor="#fff"
+                  scale={isHighlighted ? 1.2 : 1}
+                />
+              </AdvancedMarker>
+            );
+          })}
         </Map>
       </APIProvider>
       
       {/* Legend Overlay */}
-      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md p-4 rounded-xl border border-royal/10 shadow-lg pointer-events-none">
+      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md p-4 rounded-xl border border-royal/10 shadow-lg pointer-events-none hidden md:block">
         <h4 className="text-[10px] font-bold uppercase tracking-widest mb-3 text-royal/50">Campus Legend</h4>
         <div className="space-y-2">
           <div className="flex items-center gap-2">

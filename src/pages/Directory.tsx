@@ -12,7 +12,11 @@ import { motion } from 'motion/react';
 import { DEPARTMENTS } from '../constants';
 import { cn } from '../lib/utils';
 
-export function Directory() {
+interface DirectoryProps {
+  onNavigateToDept?: (buildingName: string) => void;
+}
+
+export function Directory({ onNavigateToDept }: DirectoryProps) {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
 
@@ -34,9 +38,9 @@ export function Directory() {
           <div className="w-12 h-12 bg-royal text-white rounded-2xl flex items-center justify-center">
             <Building2 size={24} />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-royal">Department Directory</h1>
+          <h1 className="text-4xl font-bold tracking-tight text-royal">Sosh South Directory</h1>
           <p className="text-royal/50 max-w-lg leading-relaxed">
-            Quickly find contact information and physical locations for all university faculties and administrative offices.
+            Quickly find contact information and physical locations for all TUT faculties and administrative offices at Soshanguve South.
           </p>
         </div>
 
@@ -85,7 +89,7 @@ export function Directory() {
               {/* Sidebar color accent */}
               <div className={cn(
                 "absolute left-0 top-0 bottom-0 w-1",
-                dept.faculty === 'Science' ? "bg-royal" : "bg-sunflower"
+                dept.faculty === 'ICT' ? "bg-royal" : "bg-sunflower"
               )} />
 
               {/* Building Info */}
@@ -120,7 +124,10 @@ export function Directory() {
 
               {/* Actions */}
               <div className="flex justify-end gap-3 w-full">
-                 <button className="px-4 py-2 bg-slate-50 text-royal text-[10px] font-bold rounded-lg uppercase tracking-widest hover:bg-sunflower hover:text-royal transition-colors flex items-center gap-2 shadow-sm">
+                 <button 
+                   onClick={() => onNavigateToDept?.(dept.building)}
+                   className="px-4 py-2 bg-slate-50 text-royal text-[10px] font-bold rounded-lg uppercase tracking-widest hover:bg-sunflower hover:text-royal transition-colors flex items-center gap-2 shadow-sm"
+                 >
                    Navigate <ArrowUpRight size={14} />
                  </button>
               </div>

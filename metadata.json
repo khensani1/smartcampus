@@ -1,13 +1,13 @@
 {
-  "name": "CSAS - Campus Smart Assistance System",
-  "description": "A unified digital platform for students offering AI-driven course recommendations, smart campus navigation, departmental access, and administrative analytics.",
+  "name": "CSAS - TUT Soshanguve South",
+  "description": "Smart Assistance System specifically designed for Tshwane University of Technology (TUT) Soshanguve South Campus, featuring AI course advice and campus navigation.",
   "requestFramePermissions": [
     "geolocation"
   ],
   "majorCapabilities": [
-    "AI-powered academic guidance",
-    "Smart campus navigation with route optimization",
-    "Interactive reporting and analytics dashboard",
-    "Centralized departmental directory"
+    "AI-powered TUT academic guidance",
+    "Soshanguve South campus navigation",
+    "Departmental analytics dashboard",
+    "TUT Departmental directory"
   ]
 }

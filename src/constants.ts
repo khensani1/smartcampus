@@ -6,69 +6,78 @@ import { Course, Department } from './types';
 
 export const COURSES: Course[] = [
   {
-    id: 'bsc-cs',
-    name: 'BSc Computer Science',
-    faculty: 'Science',
-    minAPS: 32,
-    subjects: ['Mathematics', 'Physical Science'],
-    description: 'A comprehensive study of computing principles, software development, and algorithm design.',
-    careerPaths: ['Software Engineer', 'Data Scientist', 'Systems Architect']
+    id: 'dip-ict-appdev',
+    name: 'Diploma in ICT in Applications Development',
+    faculty: 'ICT',
+    minAPS: 26,
+    subjects: ['Mathematics/Technical Mathematics', 'English'],
+    description: 'Specialized training in software development, mobile apps, and systems analysis.',
+    careerPaths: ['Software Developer', 'Mobile App Developer', 'Systems Analyst']
   },
   {
-    id: 'beng-civil',
-    name: 'BEng Civil Engineering',
-    faculty: 'Engineering & Built Environment',
-    minAPS: 36,
-    subjects: ['Mathematics', 'Physical Science'],
-    description: 'Designing and maintaining infrastructures like roads, bridges, and water systems.',
-    careerPaths: ['Civil Engineer', 'Structural Designer', 'Project Manager']
+    id: 'dip-ict-support',
+    name: 'Diploma in ICT in Support Services',
+    faculty: 'ICT',
+    minAPS: 24,
+    subjects: ['Mathematics/Technical Mathematics', 'English'],
+    description: 'Focused on network support, infrastructure management, and technical troubleshooting.',
+    careerPaths: ['Network Administrator', 'IT Support Specialist', 'Systems Administrator']
   },
   {
-    id: 'bcom-acc',
-    name: 'BCom Accounting',
-    faculty: 'Commerce',
-    minAPS: 30,
-    subjects: ['Mathematics'],
-    description: 'Professional training in accounting, auditing, and financial management.',
-    careerPaths: ['Chartered Accountant', 'Financial Analyst', 'Auditor']
-  },
-  {
-    id: 'ba-law',
-    name: 'BA Law',
+    id: 'ba-public-admin',
+    name: 'Bachelors in Public Administration',
     faculty: 'Humanities',
-    minAPS: 28,
+    minAPS: 22,
     subjects: ['English'],
-    description: 'Understanding legal systems, justice, and human rights.',
-    careerPaths: ['Legal Advisor', 'Advocate', 'Politician']
+    description: 'Prepares students for management roles in the public sector and government institutions.',
+    careerPaths: ['Public Sector Manager', 'Policy Analyst', 'Municipal Administrator']
+  },
+  {
+    id: 'dip-journalism',
+    name: 'Diploma in Journalism',
+    faculty: 'Humanities',
+    minAPS: 25,
+    subjects: ['English'],
+    description: 'Training in news writing, broadcasting, and mass communication.',
+    careerPaths: ['Journalist', 'News Editor', 'Media Consultant']
   }
 ];
 
 export const DEPARTMENTS: Department[] = [
   {
-    id: 'dept-cs',
-    name: 'Department of Computer Science',
-    faculty: 'Science',
-    contactEmail: 'cs-dept@university.ac.za',
-    contactPhone: '+27 11 717 1000',
-    building: 'Mathematical Sciences Building',
-    location: { lat: -26.1906, lng: 28.0264 }
+    id: 'dept-ict',
+    name: 'Faculty of Information & Communication Technology',
+    faculty: 'ICT',
+    contactEmail: 'ict-info@tut.ac.za',
+    contactPhone: '+27 12 382 9000',
+    building: 'Building 10 (ICT Building)',
+    location: { lat: -25.5413, lng: 28.0863 }
   },
   {
-    id: 'dept-eng',
-    name: 'School of Engineering',
-    faculty: 'Engineering',
-    contactEmail: 'eng-info@university.ac.za',
-    contactPhone: '+27 11 717 2000',
-    building: 'Chamber of Mines Building',
-    location: { lat: -26.1920, lng: 28.0300 }
+    id: 'dept-humanities',
+    name: 'Faculty of Humanities',
+    faculty: 'Humanities',
+    contactEmail: 'humanities@tut.ac.za',
+    contactPhone: '+27 12 382 9100',
+    building: 'Building L (Humanities Building)',
+    location: { lat: -25.5420, lng: 28.0870 }
   },
   {
-    id: 'admin-enrol',
-    name: 'Student Enrolment Centre',
+    id: 'admin-registrar',
+    name: 'Registrar & Student Admin',
     faculty: 'Administration',
-    contactEmail: 'admission@university.ac.za',
-    contactPhone: '+27 11 717 3000',
-    building: 'Solomon Mahlangu House',
-    location: { lat: -26.1910, lng: 28.0280 }
+    contactEmail: 'admissionsosh@tut.ac.za',
+    contactPhone: '+27 12 382 9200',
+    building: 'Building 21 (Admin Block)',
+    location: { lat: -25.5408, lng: 28.0855 }
+  },
+  {
+    id: 'campus-library',
+    name: 'Soshanguve South Campus Library',
+    faculty: 'Support',
+    contactEmail: 'librarysosh@tut.ac.za',
+    contactPhone: '+27 12 382 9300',
+    building: 'Building 21 (Library Wing)',
+    location: { lat: -25.5405, lng: 28.0850 }
   }
 ];

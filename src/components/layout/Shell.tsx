@@ -15,6 +15,8 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../../lib/utils';
 import { AssistantChat } from '../chat/AssistantChat';
+import { auth } from '../../lib/firebase';
+import { signOut } from 'firebase/auth';
 
 interface NavItem {
   id: string;
@@ -34,11 +36,26 @@ export interface ShellProps {
   children: React.ReactNode;
   activeId: string;
   onNavigate: (id: string) => void;
+  isChatOpen: boolean;
+  setIsChatOpen: (open: boolean) => void;
+  userProfile: {
+    fullName: string;
+    surname: string;
+    studentNumber: string;
+  } | null;
 }
 
-export function Shell({ children, activeId, onNavigate }: ShellProps) {
+export function Shell({ children, activeId, onNavigate, isChatOpen, setIsChatOpen, userProfile }: ShellProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  const handleLogout = () => {
+    signOut(auth);
+  };
+
+  const getInitials = () => {
+    if (!userProfile) return 'S';
+    return `${userProfile.fullName[0]}${userProfile.surname[0]}`.toUpperCase();
+  };
 
   return (
     <div className="flex h-screen bg-slate-50 text-royal font-sans selection:bg-sunflower selection:text-royal">
@@ -56,9 +73,9 @@ export function Shell({ children, activeId, onNavigate }: ShellProps) {
               className="font-bold text-xl tracking-tighter flex items-center gap-2"
             >
               <div className="w-8 h-8 bg-royal rounded flex items-center justify-center">
-                <span className="text-white text-xs">C</span>
+                <span className="text-white text-xs">T</span>
               </div>
-              <span className="text-royal">CSAS</span>
+              <span className="text-royal">TUT CSAS</span>
             </motion.div>
           )}
           <button 
@@ -96,14 +113,20 @@ export function Shell({ children, activeId, onNavigate }: ShellProps) {
 
         <div className="p-4 border-t border-royal/5 space-y-2 text-royal">
           <div className={cn("flex items-center gap-3 p-2 rounded-lg", isCollapsed ? "justify-center" : "")}>
-            <div className="w-8 h-8 rounded-full bg-sunflower text-royal flex items-center justify-center font-bold text-xs">JD</div>
+            <div className="w-8 h-8 rounded-full bg-sunflower text-royal flex items-center justify-center font-bold text-xs uppercase shadow-sm">
+              {getInitials()}
+            </div>
             {!isCollapsed && (
               <div className="flex-1 overflow-hidden">
-                <p className="text-sm font-semibold truncate">Jane Doe</p>
-                <p className="text-xs text-royal/50 truncate">Student #215432</p>
+                <p className="text-sm font-semibold truncate text-royal">{userProfile?.fullName || 'Student'} {userProfile?.surname || ''}</p>
+                <p className="text-[10px] text-royal/50 truncate font-bold uppercase tracking-widest">S# {userProfile?.studentNumber || '000000000'}</p>
               </div>
             )}
-            {!isCollapsed && <LogOut size={16} className="text-rose/50 hover:text-rose cursor-pointer" />}
+            {!isCollapsed && (
+              <button onClick={handleLogout} className="p-1 hover:bg-rose/10 rounded transition-colors text-rose/50 hover:text-rose group">
+                <LogOut size={16} />
+              </button>
+            )}
           </div>
         </div>
       </motion.aside>
@@ -120,9 +143,6 @@ export function Shell({ children, activeId, onNavigate }: ShellProps) {
             />
           </div>
           <div className="flex items-center gap-3 ml-4">
-             <div className="px-3 py-1 bg-sunflower/20 text-royal text-xs font-bold rounded-full uppercase tracking-widest whitespace-nowrap">
-              Admin Mode
-             </div>
           </div>
         </header>
 
