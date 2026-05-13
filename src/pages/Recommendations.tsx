@@ -8,7 +8,11 @@ import {
   ChevronRight,
   BookOpen,
   Target,
-  ArrowRight
+  ArrowRight,
+  X,
+  Clock,
+  TrendingUp,
+  Award
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { RecommendationRequest } from '../types';
@@ -24,6 +28,7 @@ export function Recommendations() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState<any | null>(null);
 
   const addSubject = () => {
     setSubjects([...subjects, { name: '', score: 50 }]);
@@ -181,6 +186,7 @@ export function Recommendations() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
+                onClick={() => setSelectedCourse(rec)}
                 className="bg-white p-8 rounded-3xl border border-royal/5 shadow-sm group hover:border-royal/20 transition-all cursor-pointer relative overflow-hidden"
               >
                 <div className="relative z-10">
@@ -216,6 +222,96 @@ export function Recommendations() {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Course Detail Modal */}
+      <AnimatePresence>
+        {selectedCourse && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 lg:p-8">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedCourse(null)}
+              className="absolute inset-0 bg-royal/40 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2rem] shadow-2xl relative z-10 border border-royal/10"
+            >
+              {/* Header */}
+              <div className="sticky top-0 bg-white/80 backdrop-blur-md px-8 py-6 border-b border-royal/5 flex justify-between items-center z-20">
+                <div>
+                  <span className="text-[10px] font-bold text-royal/40 uppercase tracking-widest mb-1 block">{selectedCourse.faculty}</span>
+                  <h2 className="text-2xl font-bold text-royal">{selectedCourse.courseName}</h2>
+                </div>
+                <button 
+                  onClick={() => setSelectedCourse(null)}
+                  className="w-10 h-10 bg-slate-50 text-royal hover:bg-royal hover:text-white rounded-full flex items-center justify-center transition-all shadow-sm"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="p-8 space-y-8">
+                {/* Duration */}
+                <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-royal/5">
+                  <div className="w-10 h-10 bg-royal/10 text-royal rounded-xl flex items-center justify-center">
+                    <Clock size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-bold text-royal/40 uppercase tracking-widest">Duration</h4>
+                    <p className="text-sm font-semibold text-royal">{selectedCourse.duration}</p>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold text-royal uppercase tracking-widest flex items-center gap-2">
+                    <BookOpen size={16} className="text-royal/30" />
+                    About this Course
+                  </h3>
+                  <p className="text-royal/70 leading-relaxed italic">{selectedCourse.description}</p>
+                </div>
+
+                {/* Benefits */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold text-royal uppercase tracking-widest flex items-center gap-2">
+                    <Award size={16} className="text-royal/30" />
+                    How it helps you
+                  </h3>
+                  <p className="text-royal/70 leading-relaxed">{selectedCourse.benefits}</p>
+                </div>
+
+                {/* Job Demand */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold text-royal uppercase tracking-widest flex items-center gap-2">
+                    <TrendingUp size={16} className="text-royal/30" />
+                    Future & Job Demand
+                  </h3>
+                  <div className="bg-sunflower/5 p-6 rounded-2xl border border-sunflower/20">
+                    <p className="text-royal/80 leading-relaxed font-medium">{selectedCourse.jobDemand}</p>
+                  </div>
+                </div>
+
+                {/* Career Paths */}
+                <div className="space-y-4">
+                  <h4 className="text-xs font-bold text-royal/40 uppercase tracking-widest">Career Opportunities</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedCourse.careerAlignment.map((career: string) => (
+                      <span key={career} className="px-4 py-2 bg-royal/5 text-royal text-xs font-bold rounded-xl border border-royal/10">
+                        {career}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

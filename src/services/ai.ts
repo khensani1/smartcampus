@@ -37,10 +37,14 @@ export const aiService = {
               courseName: { type: Type.STRING },
               faculty: { type: Type.STRING },
               matchingReason: { type: Type.STRING },
+              description: { type: Type.STRING, description: "Detailed overview of what the course covers" },
+              benefits: { type: Type.STRING, description: "How this course helps the student's career" },
+              jobDemand: { type: Type.STRING, description: "Information about current market demand for this qualification" },
+              duration: { type: Type.STRING, description: "Typical duration (e.g., 3 years full-time)" },
               alternativePathway: { type: Type.STRING, description: "Only if APS is marginal" },
               careerAlignment: { type: Type.ARRAY, items: { type: Type.STRING } }
             },
-            required: ["courseName", "faculty", "matchingReason", "careerAlignment"]
+            required: ["courseName", "faculty", "matchingReason", "description", "benefits", "jobDemand", "duration", "careerAlignment"]
           }
         }
       }
