@@ -1,10 +1,22 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { RecommendationRequest } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+let aiInstance: GoogleGenAI | null = null;
+
+function getAI() {
+  if (!aiInstance) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("GEMINI_API_KEY is not configured in the environment variables.");
+    }
+    aiInstance = new GoogleGenAI({ apiKey });
+  }
+  return aiInstance;
+}
 
 export const aiService = {
   async getCourseRecommendations(request: RecommendationRequest) {
+    const ai = getAI();
     const prompt = `Based on the following student profile, suggest 3-5 academic courses. 
     APS Score: ${request.apsScore}
     Subjects: ${request.subjects.map(s => `${s.name} (${s.score}%)`).join(', ')}
@@ -34,10 +46,15 @@ export const aiService = {
       }
     });
 
+    if (!response.text) {
+      throw new Error("Failed to get a response from the AI service.");
+    }
+
     return JSON.parse(response.text);
   },
 
   async askAssistant(query: string, context?: string) {
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: query,
@@ -52,6 +69,7 @@ export const aiService = {
   },
 
   async getCampusInsights() {
+    const ai = getAI();
     const prompt = "Generate 3 short, creative 'Campus Insights' for TUT Soshanguve South students. These should sound like bulleted news items or tips about campus life, admin deadlines, or academic advice. Keep them concise and relevant to Sosh South.";
     
     const response = await ai.models.generateContent({
@@ -73,10 +91,13 @@ export const aiService = {
         }
       }
     });
+
+    if (!response.text) return [];
     return JSON.parse(response.text);
   },
 
   async getSmartNavigation(query: string) {
+    const ai = getAI();
     const prompt = `Translate this student's navigation request into a specific building or location at TUT Soshanguve South: "${query}".
     Buildings available: Building 10 (ICT), Building L (Humanities), Building 21 (Admin/Library), Student Center, Cafeteria.
     If multiple, pick the best one.`;
@@ -97,6 +118,10 @@ export const aiService = {
         }
       }
     });
+
+    if (!response.text) {
+      throw new Error("Failed to generate navigation data.");
+    }
     return JSON.parse(response.text);
   }
 };

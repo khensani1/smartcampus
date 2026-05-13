@@ -22,6 +22,7 @@ export function Recommendations() {
   ]);
   const [interests, setInterests] = useState<string[]>(['Technology', 'Design']);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [recommendations, setRecommendations] = useState<any[]>([]);
 
   const addSubject = () => {
@@ -40,6 +41,7 @@ export function Recommendations() {
 
   const handleGetRecommendations = async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await aiService.getCourseRecommendations({
         apsScore: aps,
@@ -47,8 +49,9 @@ export function Recommendations() {
         interests
       });
       setRecommendations(data);
-    } catch (error) {
-      console.error(error);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "An unexpected error occurred while generating predictions. Please ensure your student profile is complete.");
     } finally {
       setLoading(false);
     }
@@ -70,6 +73,11 @@ export function Recommendations() {
         </header>
 
         <div className="bg-white p-8 rounded-3xl border border-royal/5 shadow-sm space-y-8">
+          {error && (
+            <div className="p-4 bg-rose/5 border border-rose/10 rounded-2xl text-rose text-sm font-medium">
+              {error}
+            </div>
+          )}
           {/* APS Score */}
           <div className="space-y-4">
             <label className="text-xs font-bold uppercase tracking-widest text-royal/40">Overall APS Score</label>
